@@ -11,6 +11,7 @@ void SyntaxTreeChecker::visit(Assembly& node) {
 }
 
 void SyntaxTreeChecker::visit(FuncDef& node) {
+    this->enter_scope();
     node.body->accept(*this);
     this->exit_scope();
 }
