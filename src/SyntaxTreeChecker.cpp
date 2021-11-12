@@ -70,12 +70,12 @@ void SyntaxTreeChecker::visit(AssignStmt& node) {
 void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
 
 void SyntaxTreeChecker::visit(BlockStmt& node) {
-    //this->enter_scope();
+    this->enter_scope();
     std::cout << node.body.size() << std::endl;
     for (auto stmt : node.body){    
         stmt->accept(*this);
     }
-    //this->exit_scope();
+    this->exit_scope();
 }
 
 void SyntaxTreeChecker::visit(EmptyStmt& node) {}
