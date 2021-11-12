@@ -52,6 +52,7 @@ void SyntaxTreeChecker::visit(ReturnStmt& node) {
 }
 
 void SyntaxTreeChecker::visit(VarDef& node) {
+    this->enter_scope();
     bool is_declared = this->lookup_variable(node.name, this->Expr_int);
     if (is_declared){
         err.error(node.loc, "The variable has ALREADY been defined.");
@@ -61,21 +62,28 @@ void SyntaxTreeChecker::visit(VarDef& node) {
     if (node.is_inited) {
         node.initializers->accept(*this);
     }
+    this->exit_scope();
 }
 
 void SyntaxTreeChecker::visit(AssignStmt& node) {
     node.value->accept(*this);
 }
+
 void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
+
 void SyntaxTreeChecker::visit(BlockStmt& node) {
     this->enter_scope();
-    for (auto stmt : node.body)
+    for (auto stmt : node.body){
         stmt->accept(*this);
+    }
     this->exit_scope();
 }
+
 void SyntaxTreeChecker::visit(EmptyStmt& node) {}
+
 void SyntaxTreeChecker::visit(SyntaxTree::ExprStmt& node) {
     node.exp->accept(*this);
+
 }
 void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {
     bool is_declared = this->lookup_variable(node.name, this->Expr_int);
@@ -85,10 +93,12 @@ void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {
     }
     this->declare_variable(node.name, node.param_type);
 }
+
 void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {
     for (auto funcparam : node.params)
         funcparam->accept(*this);
 }
+
 void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {}
