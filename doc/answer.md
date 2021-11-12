@@ -19,3 +19,4 @@
 在`build`目录下使用命令`./sysYFParser -emit-ast ../testcase.sy`，可得到语法树的输出结果为`int a = (2%3);`
 
 Note: 上述结果与`testcase.sy`中的内容`int a = 2 % 3;`略有不同。
+
