@@ -63,7 +63,7 @@ void SyntaxTreeChecker::visit(VarDef& node) {
 }
 
 void SyntaxTreeChecker::visit(AssignStmt& node) {
-    node.exp->accept(*this);
+    node.value->accept(*this);
 }
 void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
 void SyntaxTreeChecker::visit(BlockStmt& node) {
