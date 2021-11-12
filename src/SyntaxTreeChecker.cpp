@@ -35,7 +35,7 @@ void SyntaxTreeChecker::visit(UnaryExpr& node) {
 }
 
 void SyntaxTreeChecker::visit(LVal& node) {
-    bool is_declared = this->lookup_variable(node.name, this->Expr_int);
+    bool is_declared = this->lookup_variable(node.name, this->Expr_int);;
     if (!is_declared){
         err.error(node.loc, "The variable has NOT been defined.");
         exit(int(ErrorType::VarUnknown));
