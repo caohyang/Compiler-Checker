@@ -12,6 +12,7 @@ void SyntaxTreeChecker::visit(Assembly& node) {
 
 void SyntaxTreeChecker::visit(FuncDef& node) {
     this->enter_scope();
+    node.param_list->accept(*this);
     node.body->accept(*this);
     this->exit_scope();
 }
@@ -77,7 +78,10 @@ void SyntaxTreeChecker::visit(SyntaxTree::ExprStmt& node) {
     node.exp->accept(*this);
 }
 void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {}
+void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {
+    for (auto funcparam : node.params)
+        funcparam->accept(*this);
+}
 void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {}
