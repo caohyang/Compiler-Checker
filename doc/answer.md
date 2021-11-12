@@ -6,13 +6,13 @@
 
 `VarDef`: 包括参数`is_constant`, `btype`, `name`, `is_inited`, `array_length`, `initializers`. `visit`函数根据`is_constant`判断是否输出代表常量定义的字符串`const`，再输出类型，访问数组每一维的表达式，如果有初始化则输出初始值并访问对应表达式。
 
-`InitVal`:
+`InitVal`: 包括参数`isExp`, `elementList`, `expr`. visit函数根据`isExp`判断是否为表达式，若是则访问该表达式，否则按列表形式输出，并依次访问节点中的每个子节点。
 
-`LVal`:
+`LVal`: 包括参数`name`, `array_index`. visit函数输出左值的名称，访问每一维的数组索引。
 
-`FuncParam`:
+`FuncParam`: 包括参数`name`, `param_type`, `array_index`. visit函数输出函数参数的类型和名称，并遍历访问每一维的表达式（不访问空指针）。
 
-`FuncFParamList`:
+`FuncFParamList`: 包括参数`params`. visit函数访问节点指向的所有参数。
 
 问题1-2： 
 
