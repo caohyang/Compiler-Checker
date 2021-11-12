@@ -72,7 +72,9 @@ void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
 void SyntaxTreeChecker::visit(BlockStmt& node) {
     this->enter_scope();
     for (auto stmt : node.body){
+        this->enter_scope();
         stmt->accept(*this);
+        this->enter_scope();
     }
     this->exit_scope();
 }
