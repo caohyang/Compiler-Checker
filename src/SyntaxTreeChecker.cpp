@@ -35,13 +35,11 @@ void SyntaxTreeChecker::visit(UnaryExpr& node) {
 }
 
 void SyntaxTreeChecker::visit(LVal& node) {
-    bool tmp = false;
-    bool is_declared = this->lookup_variable(node.name, tmp);
+    bool is_declared = this->lookup_variable(node.name, this->Expr_int);
     if (!is_declared){
         err.error(node.loc, "The variable has NOT been defined.");
         exit(int(ErrorType::VarUnknown));
     }
-    this->Expr_int = tmp;
 }
 
 void SyntaxTreeChecker::visit(Literal& node) {
@@ -53,13 +51,11 @@ void SyntaxTreeChecker::visit(ReturnStmt& node) {
 }
 
 void SyntaxTreeChecker::visit(VarDef& node) {
-    bool tmp = false;
-    bool is_declared = this->lookup_variable(node.name, tmp);
+    bool is_declared = this->lookup_variable(node.name, this->Expr_int);
     if (is_declared){
         err.error(node.loc, "The variable has ALREADY been defined.");
         exit(int(ErrorType::VarDuplicated));
     }
-    this->Expr_int = tmp;
     this->declare_variable(node.name, node.btype);
     if (node.is_inited) {
         node.initializers->accept(*this);
