@@ -69,7 +69,8 @@ void SyntaxTreeChecker::visit(AssignStmt& node) {}
 void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
 void SyntaxTreeChecker::visit(BlockStmt& node) {
     this->enter_scope();
-    node.body->accept(*this);
+    for (auto stmt : node.body)
+        stmt->accept(*this);
     this->exit_scope();
 }
 void SyntaxTreeChecker::visit(EmptyStmt& node) {}
@@ -88,6 +89,7 @@ void SyntaxTreeChecker::visit(SyntaxTree::ContinueStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::InitVal& node) {
     if (node.isExp) {
         node.expr->accept(*this);
+        printf("We are here in class Initval.");
     } 
     else {
         for (auto element : node.elementList) {
