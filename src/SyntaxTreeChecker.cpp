@@ -88,7 +88,6 @@ void SyntaxTreeChecker::visit(SyntaxTree::ContinueStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::InitVal& node) {
     if (node.isExp) {
         node.expr->accept(*this);
-        printf("We are here in class Initval.");
     } 
     else {
         for (auto element : node.elementList) {
