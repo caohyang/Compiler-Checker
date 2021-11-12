@@ -3,9 +3,11 @@
 using namespace SyntaxTree;
 
 void SyntaxTreeChecker::visit(Assembly& node) {
+    this->enter_scope();
     for (auto def : node.global_defs) {
         def->accept(*this);
     }
+    this->exit_scope();
 }
 
 void SyntaxTreeChecker::visit(FuncDef& node) {
