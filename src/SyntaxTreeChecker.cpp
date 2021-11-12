@@ -69,6 +69,8 @@ void SyntaxTreeChecker::visit(AssignStmt& node) {}
 void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
 void SyntaxTreeChecker::visit(BlockStmt& node) {
     this->enter_scope();
+    node.body->accept(*this);
+    this->exit_scope();
 }
 void SyntaxTreeChecker::visit(EmptyStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::ExprStmt& node) {
