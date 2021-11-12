@@ -70,12 +70,12 @@ void SyntaxTreeChecker::visit(AssignStmt& node) {
 void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
 
 void SyntaxTreeChecker::visit(BlockStmt& node) {
-    this->enter_scope();
+    //this->enter_scope();
     std::cout << node.body.size() << std::endl;
     for (auto stmt : node.body){    
         stmt->accept(*this);
     }
-    this->exit_scope();
+    //this->exit_scope();
 }
 
 void SyntaxTreeChecker::visit(EmptyStmt& node) {}
@@ -100,14 +100,7 @@ void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {
 
 void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {
-    this->enter_scope();
-    node.if_statement->accept(*this);
-    this->exit_scope();
-    this->enter_scope();
-    node.else_statement->accept(*this);
-    this->exit_scope();
-}
+void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::WhileStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::BreakStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::ContinueStmt& node) {}
