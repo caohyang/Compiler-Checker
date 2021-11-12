@@ -77,7 +77,14 @@ void SyntaxTreeChecker::visit(EmptyStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::ExprStmt& node) {
     node.exp->accept(*this);
 }
-void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {}
+void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {
+    bool is_declared = this->lookup_variable(node.name, this->Expr_int);
+    if (is_declared){
+        err.error(node.loc, "The variable has ALREADY been defined.");
+        exit(int(ErrorType::VarDuplicated));
+    }
+    this->declare_variable(node.name, node.param_type);
+}
 void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {
     for (auto funcparam : node.params)
         funcparam->accept(*this);
