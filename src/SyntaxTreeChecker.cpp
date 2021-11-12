@@ -52,7 +52,6 @@ void SyntaxTreeChecker::visit(ReturnStmt& node) {
 }
 
 void SyntaxTreeChecker::visit(VarDef& node) {
-    this->enter_scope();
     bool is_declared = this->lookup_variable(node.name, this->Expr_int);
     if (is_declared){
         err.error(node.loc, "The variable has ALREADY been defined.");
@@ -62,7 +61,6 @@ void SyntaxTreeChecker::visit(VarDef& node) {
     if (node.is_inited) {
         node.initializers->accept(*this);
     }
-    this->exit_scope();
 }
 
 void SyntaxTreeChecker::visit(AssignStmt& node) {
