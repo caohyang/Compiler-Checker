@@ -35,7 +35,7 @@ void SyntaxTreeChecker::visit(UnaryExpr& node) {
 }
 
 void SyntaxTreeChecker::visit(LVal& node) {
-    bool is_declared = this->lookup_variable(node.name, this->Expr_int);;
+    bool is_declared = this->lookup_variable(node.name, this->Expr_int);
     if (!is_declared){
         err.error(node.loc, "The variable has NOT been defined.");
         exit(int(ErrorType::VarUnknown));
@@ -62,9 +62,7 @@ void SyntaxTreeChecker::visit(VarDef& node) {
     }
 }
 
-void SyntaxTreeChecker::visit(AssignStmt& node) {
-    node.value->accept(*this);
-}
+void SyntaxTreeChecker::visit(AssignStmt& node) {}
 void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
 void SyntaxTreeChecker::visit(BlockStmt& node) {
     this->enter_scope();
@@ -88,6 +86,7 @@ void SyntaxTreeChecker::visit(SyntaxTree::ContinueStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::InitVal& node) {
     if (node.isExp) {
         node.expr->accept(*this);
+        printf("We are here in class Initval.");
     } 
     else {
         for (auto element : node.elementList) {
