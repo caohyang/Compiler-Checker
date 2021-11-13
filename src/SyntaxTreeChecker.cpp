@@ -80,6 +80,7 @@ void SyntaxTreeChecker::visit(VarDef& node) {
 }
 
 void SyntaxTreeChecker::visit(AssignStmt& node) {
+    node.target->accept(*this);
     node.value->accept(*this);
 }
 
