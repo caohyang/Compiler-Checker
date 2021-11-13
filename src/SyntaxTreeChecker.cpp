@@ -89,6 +89,10 @@ void SyntaxTreeChecker::visit(FuncCallStmt& node) {
         err.error(node.loc, "The function has NOT been defined.");
         exit(int(ErrorType::FuncUnknown));
     }
+    if (node.params.size() != ptr->args_int.size()){
+        err.error(node.loc, "The numbers of parameters are DIFFERENT.");
+        exit(int(ErrorType::FuncParams));
+    }
     for (auto funcparam : node.params)
         funcparam->accept(*this);
 }
