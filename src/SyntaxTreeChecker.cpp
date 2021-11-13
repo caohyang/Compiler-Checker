@@ -43,11 +43,14 @@ void SyntaxTreeChecker::visit(UnaryExpr& node) {
 }
 
 void SyntaxTreeChecker::visit(LVal& node) {
-    bool is_declared = this->lookup_variable(node.name, this->Expr_int);;
+    bool is_declared = this->lookup_variable(node.name, this->Expr_int);
     if (!is_declared){
         err.error(node.loc, "The variable has NOT been defined.");
         exit(int(ErrorType::VarUnknown));
     }
+    for (auto element : node.array_index)
+        if (element != nullptr)
+            element->accept(*this);
 }
 
 void SyntaxTreeChecker::visit(Literal& node) {
@@ -67,19 +70,26 @@ void SyntaxTreeChecker::visit(VarDef& node) {
             std::cout << x.first << ' ' << x.second << std::endl;
     }
     */
-
+    if (node.is_inited) {
+        node.initializers->accept(*this);
+    }
     bool flag = this->declare_variable(node.name, node.btype);
     if (!flag){
         err.error(node.loc, "The variable has ALREADY been defined.");
         exit(int(ErrorType::VarDuplicated));
     }
-    this->lookup_variable(node.name, this->Expr_int);
-    if (node.is_inited) {
-        node.initializers->accept(*this);
+    auto it = this->variables.begin();
+    it++; //the top level of functions
+    if (it != this->variables.end() && it->count(node.name) >=1){
+        err.error(node.loc, "The variable has ALREADY been defined.");
+        exit(int(ErrorType::VarDuplicated));
     }
+    this->lookup_variable(node.name, this->Expr_int);
+    
 }
 
 void SyntaxTreeChecker::visit(AssignStmt& node) {
+    node.target->accept(*this);
     node.value->accept(*this);
 }
 
@@ -119,8 +129,8 @@ void SyntaxTreeChecker::visit(EmptyStmt& node) {}
 
 void SyntaxTreeChecker::visit(SyntaxTree::ExprStmt& node) {
     node.exp->accept(*this);
-
 }
+
 void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {
     bool flag = this->declare_variable(node.name, node.param_type);
     if (!flag){
@@ -132,13 +142,34 @@ void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {
 
 void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {
     for (auto funcparam : node.params)
-        funcparam->accept(*this);
+        if (funcparam != nullptr)
+            funcparam->accept(*this);
 }
 
-void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::WhileStmt& node) {}
+void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {
+    node.lhs->accept(*this);
+    node.rhs->accept(*this);
+}
+void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {
+    node.rhs->accept(*this);
+}
+void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {
+    node.cond_exp->accept(*this);
+    this->enter_scope();
+    node.if_statement->accept(*this);
+    this->exit_scope();
+    if (node.else_statement != nullptr){
+        this->enter_scope();
+        node.else_statement->accept(*this);
+        this->exit_scope();
+    }
+}
+void SyntaxTreeChecker::visit(SyntaxTree::WhileStmt& node) {
+    node.cond_exp->accept(*this);
+    this->enter_scope();
+    node.statement->accept(*this);
+    this->exit_scope();
+}
 void SyntaxTreeChecker::visit(SyntaxTree::BreakStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::ContinueStmt& node) {}
 
