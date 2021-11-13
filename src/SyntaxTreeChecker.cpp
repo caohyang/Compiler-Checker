@@ -75,6 +75,10 @@ void SyntaxTreeChecker::visit(VarDef& node) {
         err.error(node.loc, "The variable has ALREADY been defined.");
         exit(int(ErrorType::VarDuplicated));
     }
+    if (this->variables.begin()->count(node.name) > 0){
+        err.error(node.loc, "The variable has ALREADY been defined.");
+        exit(int(ErrorType::VarDuplicated));
+    }
     this->lookup_variable(node.name, this->Expr_int);
     if (node.is_inited) {
         node.initializers->accept(*this);
