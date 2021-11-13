@@ -3,9 +3,11 @@
 using namespace SyntaxTree;
 
 void SyntaxTreeChecker::visit(Assembly& node) {
+    this->enter_scope();
     for (auto def : node.global_defs) {
         def->accept(*this);
     }
+    this->exit_scope();
 }
 
 void SyntaxTreeChecker::visit(FuncDef& node) {
@@ -73,7 +75,8 @@ void SyntaxTreeChecker::visit(VarDef& node) {
         err.error(node.loc, "The variable has ALREADY been defined.");
         exit(int(ErrorType::VarDuplicated));
     }
-    auto it = this->variables.begin(); //the top level of functions
+    auto it = this->variables.begin();
+    it++; //the top level of functions
     if (it != this->variables.end() && it->count(node.name) >=1){
         err.error(node.loc, "The variable has ALREADY been defined.");
         exit(int(ErrorType::VarDuplicated));
