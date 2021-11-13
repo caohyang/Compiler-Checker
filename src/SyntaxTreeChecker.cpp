@@ -90,11 +90,18 @@ void SyntaxTreeChecker::visit(FuncCallStmt& node) {
         exit(int(ErrorType::FuncUnknown));
     }
     if (node.params.size() != ptr->args_int.size()){
-        err.error(node.loc, "The numbers of parameters are DIFFERENT.");
+        err.error(node.loc, "The NUMBERS of parameters are DIFFERENT.");
         exit(int(ErrorType::FuncParams));
     }
-    for (auto funcparam : node.params)
+    int cnt = 0;
+    for (auto funcparam : node.params){
         funcparam->accept(*this);
+        if (this->Expr_int != ptr->args_int[cnt]){
+            err.error(node.loc, "The TYPES of parameters are DIFFERENT.");
+            exit(int(ErrorType::FuncParams));
+        }
+        cnt ++;
+    }
 }
 
 void SyntaxTreeChecker::visit(BlockStmt& node) {
