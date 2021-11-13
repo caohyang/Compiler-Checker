@@ -12,6 +12,11 @@ void SyntaxTreeChecker::visit(Assembly& node) {
 
 void SyntaxTreeChecker::visit(FuncDef& node) {
     this->enter_scope();
+    PtrFunction ptr = this->lookup_functions(node.name);
+    if (ptr != nullptr){
+        err.error(node.loc, "The function has ALREADY been defined.");
+        exit(int(ErrorType::FuncDuplicated));
+    }
     this->declare_functions(node.name, node.ret_type, node.param_list);
     if (node.param_list != nullptr)
         node.param_list->accept(*this);
