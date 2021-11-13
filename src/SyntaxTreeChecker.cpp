@@ -136,7 +136,8 @@ void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {
 
 void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {
     for (auto funcparam : node.params)
-        funcparam->accept(*this);
+        if (funcparam != nullptr)
+            funcparam->accept(*this);
 }
 
 void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {
