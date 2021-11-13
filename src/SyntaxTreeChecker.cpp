@@ -12,6 +12,7 @@ void SyntaxTreeChecker::visit(Assembly& node) {
 
 void SyntaxTreeChecker::visit(FuncDef& node) {
     this->enter_scope();
+    this->declare_functions(node.name, node.ret_type, node.param_list);
     if (node.param_list != nullptr)
         node.param_list->accept(*this);
     node.body->accept(*this);
@@ -61,7 +62,7 @@ void SyntaxTreeChecker::visit(VarDef& node) {
             std::cout << x.first << ' ' << x.second << std::endl;
     }
     */
-    
+
     bool flag = this->declare_variable(node.name, node.btype);
     if (!flag){
         err.error(node.loc, "The variable has ALREADY been defined.");
@@ -77,7 +78,15 @@ void SyntaxTreeChecker::visit(AssignStmt& node) {
     node.value->accept(*this);
 }
 
-void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
+void SyntaxTreeChecker::visit(FuncCallStmt& node) {
+    PtrFunction ptr = this->lookup_functions(node.name);
+    if (ptr == nullptr){
+        err.error(node.loc, "The function has NOT been defined.");
+        exit(int(ErrorType::FuncUnknown));
+    }
+    for (auto funcparam : node.params)
+        funcparam->accept(*this);
+}
 
 void SyntaxTreeChecker::visit(BlockStmt& node) {
     this->enter_scope();
