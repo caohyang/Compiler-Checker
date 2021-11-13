@@ -70,9 +70,8 @@ void SyntaxTreeChecker::visit(VarDef& node) {
             std::cout << x.first << ' ' << x.second << std::endl;
     }
     */
-
     bool flag = this->declare_variable(node.name, node.btype);
-    if (!flag){
+    if (!flag || this->variables.begin()->count(node.name)){
         err.error(node.loc, "The variable has ALREADY been defined.");
         exit(int(ErrorType::VarDuplicated));
     }
