@@ -12,6 +12,14 @@ void SyntaxTreeChecker::visit(Assembly& node) {
 
 void SyntaxTreeChecker::visit(FuncDef& node) {
     this->enter_scope();
+    PtrFunction ptr = this->lookup_functions(node.name);
+    if (ptr != nullptr){
+        err.error(node.loc, "The function has ALREADY been defined.");
+        exit(int(ErrorType::FuncDuplicated));
+    }
+    this->declare_functions(node.name, node.ret_type, node.param_list);
+    if (node.param_list != nullptr)
+        node.param_list->accept(*this);
     node.body->accept(*this);
     this->exit_scope();
 }
@@ -51,12 +59,21 @@ void SyntaxTreeChecker::visit(ReturnStmt& node) {
 }
 
 void SyntaxTreeChecker::visit(VarDef& node) {
-    bool is_declared = this->lookup_variable(node.name, this->Expr_int);
-    if (is_declared){
+    /*
+    std::cout << node.name << ' ' << this->variables.size() << std::endl;
+    for (long unsigned int i=0;i<this->variables.size();i++){
+        std::unordered_map<std::string, bool> tmp = this->variables[i];
+        for (auto x : tmp)
+            std::cout << x.first << ' ' << x.second << std::endl;
+    }
+    */
+
+    bool flag = this->declare_variable(node.name, node.btype);
+    if (!flag){
         err.error(node.loc, "The variable has ALREADY been defined.");
         exit(int(ErrorType::VarDuplicated));
     }
-    this->declare_variable(node.name, node.btype);
+    this->lookup_variable(node.name, this->Expr_int);
     if (node.is_inited) {
         node.initializers->accept(*this);
     }
@@ -65,19 +82,59 @@ void SyntaxTreeChecker::visit(VarDef& node) {
 void SyntaxTreeChecker::visit(AssignStmt& node) {
     node.value->accept(*this);
 }
-void SyntaxTreeChecker::visit(FuncCallStmt& node) {}
+
+void SyntaxTreeChecker::visit(FuncCallStmt& node) {
+    PtrFunction ptr = this->lookup_functions(node.name);
+    if (ptr == nullptr){
+        err.error(node.loc, "The function has NOT been defined.");
+        exit(int(ErrorType::FuncUnknown));
+    }
+    if (node.params.size() != ptr->args_int.size()){
+        err.error(node.loc, "The NUMBERS of parameters are DIFFERENT.");
+        exit(int(ErrorType::FuncParams));
+    }
+    int cnt = 0;
+    for (auto funcparam : node.params){
+        funcparam->accept(*this);
+        //std::cout << node.name << ' ' << this->Expr_int << ' ' << ptr->args_int[cnt] << std::endl;
+        if (this->Expr_int != ptr->args_int[cnt]){
+            err.error(node.loc, "The TYPES of parameters are DIFFERENT.");
+            exit(int(ErrorType::FuncParams));
+        }
+        cnt ++;
+    }
+    this->Expr_int = ptr->ret_int;
+}
+
 void SyntaxTreeChecker::visit(BlockStmt& node) {
     this->enter_scope();
-    for (auto stmt : node.body)
-        stmt->accept(*this);
+    for (auto stmt : node.body){   
+        if (stmt != nullptr) 
+            stmt->accept(*this);
+    }
     this->exit_scope();
 }
+
 void SyntaxTreeChecker::visit(EmptyStmt& node) {}
+
 void SyntaxTreeChecker::visit(SyntaxTree::ExprStmt& node) {
     node.exp->accept(*this);
+
 }
-void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {}
+void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {
+    bool flag = this->declare_variable(node.name, node.param_type);
+    if (!flag){
+        err.error(node.loc, "The variable has ALREADY been defined.");
+        exit(int(ErrorType::VarDuplicated));
+    }
+    this->lookup_variable(node.name, this->Expr_int);
+}
+
+void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {
+    for (auto funcparam : node.params)
+        funcparam->accept(*this);
+}
+
 void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {}
