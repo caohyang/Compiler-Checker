@@ -119,8 +119,8 @@ void SyntaxTreeChecker::visit(EmptyStmt& node) {}
 
 void SyntaxTreeChecker::visit(SyntaxTree::ExprStmt& node) {
     node.exp->accept(*this);
-
 }
+
 void SyntaxTreeChecker::visit(SyntaxTree::FuncParam& node) {
     bool flag = this->declare_variable(node.name, node.param_type);
     if (!flag){
@@ -135,10 +135,22 @@ void SyntaxTreeChecker::visit(SyntaxTree::FuncFParamList& node) {
         funcparam->accept(*this);
 }
 
-void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {}
-void SyntaxTreeChecker::visit(SyntaxTree::WhileStmt& node) {}
+void SyntaxTreeChecker::visit(SyntaxTree::BinaryCondExpr& node) {
+    node.lhs->accept(*this);
+    node.rhs->accept(*this);
+}
+void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {
+    node.rhs->accept(*this);
+}
+void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {
+    node.cond_exp->accept(*this);
+    node.if_statement->accept(*this);
+    node.else_statement->accept(*this);
+}
+void SyntaxTreeChecker::visit(SyntaxTree::WhileStmt& node) {
+    node.cond_exp->accept(*this);
+    node.statement->accept(*this);
+}
 void SyntaxTreeChecker::visit(SyntaxTree::BreakStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::ContinueStmt& node) {}
 
