@@ -96,12 +96,14 @@ void SyntaxTreeChecker::visit(FuncCallStmt& node) {
     int cnt = 0;
     for (auto funcparam : node.params){
         funcparam->accept(*this);
+        //std::cout << node.name << ' ' << this->Expr_int << ' ' << ptr->args_int[cnt] << std::endl;
         if (this->Expr_int != ptr->args_int[cnt]){
             err.error(node.loc, "The TYPES of parameters are DIFFERENT.");
             exit(int(ErrorType::FuncParams));
         }
         cnt ++;
     }
+    this->Expr_int = ptr->ret_int;
 }
 
 void SyntaxTreeChecker::visit(BlockStmt& node) {
