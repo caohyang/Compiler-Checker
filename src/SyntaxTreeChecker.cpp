@@ -144,12 +144,18 @@ void SyntaxTreeChecker::visit(SyntaxTree::UnaryCondExpr& node) {
 }
 void SyntaxTreeChecker::visit(SyntaxTree::IfStmt& node) {
     node.cond_exp->accept(*this);
+    this->enter_scope();
     node.if_statement->accept(*this);
+    this->exit_scope();
+    this->enter_scope();
     node.else_statement->accept(*this);
+    this->exit_scope();
 }
 void SyntaxTreeChecker::visit(SyntaxTree::WhileStmt& node) {
     node.cond_exp->accept(*this);
+    this->enter_scope();
     node.statement->accept(*this);
+    this->exit_scope();
 }
 void SyntaxTreeChecker::visit(SyntaxTree::BreakStmt& node) {}
 void SyntaxTreeChecker::visit(SyntaxTree::ContinueStmt& node) {}
