@@ -71,7 +71,7 @@ void SyntaxTreeChecker::visit(VarDef& node) {
     }
     */
     bool flag = this->declare_variable(node.name, node.btype);
-    if (!flag || this->variables.begin()->count(node.name)){
+    if (!flag){
         err.error(node.loc, "The variable has ALREADY been defined.");
         exit(int(ErrorType::VarDuplicated));
     }
