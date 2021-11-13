@@ -48,6 +48,9 @@ void SyntaxTreeChecker::visit(LVal& node) {
         err.error(node.loc, "The variable has NOT been defined.");
         exit(int(ErrorType::VarUnknown));
     }
+    for (auto element : node.array_index)
+        if (element != nullptr)
+            element->accept(*this);
 }
 
 void SyntaxTreeChecker::visit(Literal& node) {
